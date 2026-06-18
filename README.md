@@ -39,12 +39,19 @@ The dashboard is built using Streamlit and Plotly.
 - Portfolio turnover visualization
 - Gross vs net performance comparison
 - Transaction cost impact metrics
+
+### Robustness & Portfolio Exploration
+
+- Robustness heatmap across momentum windows and selection thresholds
+- Best / base / worst Sharpe ratio comparison
+- Monthly selected tickers exploration
+- Dynamic portfolio composition table
 ---
 
 ## Upcoming Features
 
-- Robustness analysis
-- Portfolio composition exploration
+- Final visual polish
+- Streamlit deployment
 
 ---
 

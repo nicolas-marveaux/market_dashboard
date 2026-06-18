@@ -56,3 +56,27 @@ def gross_vs_net_chart(transaction_costs_summary):
     fig.add_trace(go.Scatter(x=transaction_costs_summary.index,y=transaction_costs_summary["Net Equity"],mode="lines",name="Net Momentum Strategy"))
     fig.update_layout(title="Gross vs Net Momentum Strategy",xaxis_title="Date",yaxis_title="Portfolio Value (Base = 100)")
     return fig
+
+
+def robustness_heatmap(robustness_grid):
+    sharpe_matrix = robustness_grid.pivot(index="Momentum Window",columns="Top Quantile",values="Sharpe Ratio")
+    sharpe_matrix = sharpe_matrix.reindex(index=["6-1", "9-1", "12-1"],columns=["Top 20%", "Top 30%", "Top 40%"])
+
+    fig = px.imshow(sharpe_matrix,text_auto=".2f",aspect="auto",color_continuous_scale="Blues",title="Robustness Heatmap: Sharpe Ratio")
+    fig.update_layout(xaxis_title="Selection Threshold",yaxis_title="Momentum Window",xaxis=dict(type="category"),yaxis=dict(type="category"))
+    return fig
+
+def best_base_worst_chart(robustness_grid):
+    robustness_grid = robustness_grid.copy()
+    best_row = robustness_grid.loc[robustness_grid["Sharpe Ratio"].idxmax()]
+    worst_row = robustness_grid.loc[robustness_grid["Sharpe Ratio"].idxmin()]
+
+    categories = ["Base: 12-1 | Top 30%",
+        f"Best: {best_row['Momentum Window']} | {best_row['Top Quantile']}",
+        f"Worst: {worst_row['Momentum Window']} | {worst_row['Top Quantile']}"]
+
+    values = [robustness_grid[(robustness_grid["Momentum Window"] == "12-1") & (robustness_grid["Top Quantile"] == "Top 30%")]["Sharpe Ratio"].iloc[0],best_row["Sharpe Ratio"],worst_row["Sharpe Ratio"]]
+
+    fig = px.bar(x=categories,y=values,title="Best / Base / Worst Parameter Combinations")
+    fig.update_layout(xaxis_title="Parameter Combination",yaxis_title="Sharpe Ratio")
+    return fig

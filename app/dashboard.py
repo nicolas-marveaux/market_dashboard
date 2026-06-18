@@ -13,6 +13,7 @@ from src.data_loader import load_returns
 from src.data_loader import load_backtest_summary
 from src.data_loader import load_performance_metrics
 from src.data_loader import load_transaction_costs_summary
+from src.data_loader import load_robustness_grid
 
 from src.charts import price_chart
 from src.charts import returns_chart
@@ -21,6 +22,8 @@ from src.charts import drawdown_chart
 from src.charts import rolling_volatility_chart
 from src.charts import turnover_chart
 from src.charts import gross_vs_net_chart
+from src.charts import robustness_heatmap
+from src.charts import best_base_worst_chart
 
 
 st.set_page_config(page_title="European Momentum Dashboard",layout="wide")
@@ -33,11 +36,12 @@ returns = load_returns()
 backtest_summary = load_backtest_summary()
 performance_metrics = load_performance_metrics()
 transaction_costs_summary = load_transaction_costs_summary()
+robustness_grid = load_robustness_grid()
 
 
 # Sidebar navigation
 st.sidebar.header("Navigation")
-section = st.sidebar.radio("Select a section",["Market Data","Strategy Performance","Risk Analysis"])
+section = st.sidebar.radio("Select a section",["Market Data","Strategy Performance","Risk Analysis","Robustness & Portfolio"])
 
 
 # Section 1 — Market Data
@@ -153,3 +157,37 @@ if section == "Risk Analysis":
 
         Comparing gross and net performance helps assess whether the strategy remains attractive after implementation costs.
         """)
+        
+        
+# Section 4 — Robustness & Portfolio
+if section == "Robustness & Portfolio":
+    st.header("Robustness and Portfolio Exploration")
+    st.write("""
+        This section evaluates whether the momentum strategy remains stable
+        across different parameter choices and allows exploration of the
+        portfolio composition through time.
+        """)
+        
+    st.subheader("Robustness Heatmap")
+    st.plotly_chart(robustness_heatmap(robustness_grid),use_container_width=True)
+    st.write("""
+        The heatmap shows the Sharpe ratio across different momentum windows
+        and portfolio selection thresholds.
+
+        A robust strategy should not rely on one isolated parameter combination.
+        """)
+        
+    st.subheader("Best / Base / Worst Sharpe Comparison")
+    st.plotly_chart(best_base_worst_chart(robustness_grid),use_container_width=True)
+    st.write("""
+        This chart compares the base strategy with the best and worst parameter
+        combinations according to Sharpe ratio.
+        """)
+
+    st.subheader("Monthly Portfolio Composition")
+    selected_tickers = backtest_summary[["Selected Tickers"]].dropna()
+    selected_date = st.selectbox("Select a month",selected_tickers.index)
+    tickers = selected_tickers.loc[selected_date, "Selected Tickers"]
+    st.write(f"Selected tickers for {selected_date.date()}:")
+    st.success(tickers)
+    st.dataframe(selected_tickers,use_container_width=True)

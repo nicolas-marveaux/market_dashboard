@@ -39,3 +39,10 @@ def load_transaction_costs_summary():
     Load turnover, transaction costs and net strategy performance.
     """
     return pd.read_csv(DATA_DIR / "transaction_costs_summary.csv",index_col=0,parse_dates=True)
+
+
+def load_robustness_grid():
+    """
+    Load robustness grid results.
+    """
+    return pd.read_csv(DATA_DIR / "robustness_grid.csv")
