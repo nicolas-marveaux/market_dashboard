@@ -8,22 +8,24 @@ if str(PROJECT_ROOT) not in sys.path:
 
 import streamlit as st
 
-from src.data_loader import load_prices
-from src.data_loader import load_returns
-from src.data_loader import load_backtest_summary
-from src.data_loader import load_performance_metrics
-from src.data_loader import load_transaction_costs_summary
-from src.data_loader import load_robustness_grid
+from src.data_loader import (
+    load_prices,
+    load_returns,
+    load_backtest_summary,
+    load_performance_metrics,
+    load_transaction_costs_summary,
+    load_robustness_grid,)
 
-from src.charts import price_chart
-from src.charts import returns_chart
-from src.charts import strategy_vs_benchmark_chart
-from src.charts import drawdown_chart
-from src.charts import rolling_volatility_chart
-from src.charts import turnover_chart
-from src.charts import gross_vs_net_chart
-from src.charts import robustness_heatmap
-from src.charts import best_base_worst_chart
+from src.charts import (
+    price_chart, 
+    returns_chart, 
+    strategy_vs_benchmark_chart, 
+    drawdown_chart, 
+    rolling_volatility_chart,
+    turnover_chart,
+    gross_vs_net_chart,
+    robustness_heatmap,
+    best_base_worst_chart)
 
 
 st.set_page_config(page_title="European Momentum Dashboard",layout="wide")
@@ -189,5 +191,5 @@ if section == "Robustness & Portfolio":
     selected_date = st.selectbox("Select a month",selected_tickers.index)
     tickers = selected_tickers.loc[selected_date, "Selected Tickers"]
     st.write(f"Selected tickers for {selected_date.date()}:")
-    st.success(tickers)
+    st.code(tickers)
     st.dataframe(selected_tickers,use_container_width=True)
